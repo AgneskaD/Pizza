@@ -58,7 +58,10 @@ const select = {
       thisProduct.id = id;
       thisProduct.data = data;
       thisProduct.renderInMenu();
+      thisProduct.getElements();
       thisProduct.initAccordion();
+      thisProduct.initOrderForm();
+      thisProduct.processOrder();
     }
 
     renderInMenu(){
@@ -85,6 +88,7 @@ const select = {
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      thisProduct.imageWrapper = thisProduct.element.querySelector(select.menuProduct.imageWrapper);
     }
 
     initAccordion() {
@@ -138,26 +142,34 @@ const select = {
       for(let paramId in thisProduct.data.params) {
         // determine param value, e.g. paramId = 'toppings', param = { label: 'Toppings', type: 'checkboxes'... }
         const param = thisProduct.data.params[paramId];
-        console.log(paramId, param);
+        //console.log(paramId, param);
         // for every option in this category
         for(let optionId in param.options) {
           // determine option value, e.g. optionId = 'olives', option = { label: 'Olives', price: 2, default: true }
           const option = param.options[optionId];
-          console.log(optionId, option);
-
+          //console.log(optionId, option);
+          //find image .paramId-optionId in thisProduct.imageWrapper
+          const image = thisProduct.imageWrapper.querySelector(`.${paramId}-${optionId}`);
           // check if there is param with a name of paramId in formData and if it includes optionId
           if(formData[paramId] && formData[paramId].includes(optionId)) {
+            //if there is image add class active
+            if (image) {
+              image.classList.add(classNames.menuProduct.imageVisible);
+            }
             // check if the option is not default
             if(!option.default) {
               // add option price to price variable
               price += option.price;
             }
-          } else {
-            // check if the option is default
-            if(option.default) {
-              // reduce price variable
-              price -= option.price;
+          } else if (option.default) {
+            // reduce price variable
+            price -= option.price;
+            //if there's no image remove class active
+            if(image) {
+              image.classList.remove(classNames.menuProduct.imageVisible);
             }
+          } else if (image) {
+            image.classList.remove(classNames.menuProduct.imageVisible);
           }
         }
       }
