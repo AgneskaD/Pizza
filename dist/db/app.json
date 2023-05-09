@@ -1,7 +1,7 @@
 {
-   "product": [
+   "products":[
       {
-        "id": "cake",
+         "id":"cake",
          "class":"small",
          "name":"Zio Stefano's Doughnut",
          "price":9,
@@ -11,7 +11,7 @@
          ]
       },
       {
-         "id": "breakfast",
+         "id":"breakfast",
          "class":"small",
          "name":"Zia Giulia's Breakfast",
          "price":9,
@@ -201,6 +201,5 @@
             }
          }
       }
-   ],
-   "order": []
+   ]
 }

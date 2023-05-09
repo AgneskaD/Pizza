@@ -405,7 +405,7 @@
       thisCart.update();
     }
   }
-  sendOrder() {
+  sendOrder(); {
     const thisCart = this;
     const url = settings.db.url + '/' + settings.db.order;
     const payload = {};
