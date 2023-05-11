@@ -34,8 +34,8 @@ class CartProduct {
     });
   }
 
-  calculateCartProductPrice() {
-    const thisCartProduct = this;
+  calculateCartProductPrice(thisCartProduct) {
+    thisCartProduct = this;
     thisCartProduct.amount = thisCartProduct.amountWidget.value;
     thisCartProduct.price = thisCartProduct.priceSingle * thisCartProduct.amount;
     thisCartProduct.dom.price.innerHTML = thisCartProduct.price;

@@ -1,4 +1,5 @@
 import {settings, select, classNames, templates} from '../settings.js';
+import {utils} from '../utils.js';
 import CartProduct from './CartProduct.js';
 
 class Cart {
@@ -12,7 +13,6 @@ class Cart {
   getElements(element) {
     const thisCart = this;
     thisCart.dom = {};
-
     thisCart.dom.wrapper = element;
     thisCart.dom.toggleTrigger = element.querySelector(select.cart.toggleTrigger);
     thisCart.dom.productList = element.querySelector(select.cart.productList);
@@ -34,7 +34,7 @@ class Cart {
     thisCart.dom.productList.addEventListener('updated', function() {
       thisCart.update();
     });
-    thisCart.dom.productList.addEventListener('remove', function(event){
+    thisCart.dom.productList.addEventListener('remove', function(){
       thisCart.remove(event.detail.cartProduct);
     });
     thisCart.dom.form.addEventListener('submit', function(event) {
@@ -50,8 +50,9 @@ class Cart {
     /* create element using utils.createElementFromHTML */
     const generatedDOM = utils.createDOMFromHTML(generatedHTML);
     //find menu container 
+    const cartContainer = thisCart.dom.productList;
     /* add element to menu */
-    thisCart.dom.productList.appendChild(generatedDOM);
+    cartContainer.appendChild(generatedDOM);
     thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
     console.log('thisCart.products', thisCart.products);
     thisCart.update();
@@ -80,43 +81,41 @@ class Cart {
   }
   remove(cartProduct){
     const thisCart = this;
-
     const elementIndex = thisCart.products.indexOf(cartProduct);
     thisCart.products.splice(elementIndex, 1);
     cartProduct.dom.wrapper.remove();
     thisCart.update();
   }
-
-sendOrder() {
-  const thisCart = this;
-  const url = settings.db.url + '/' + settings.db.order;
-  const payload = {};
-  payload.address = thisCart.dom.address.value;
-  payload.phone = thisCart.dom.phone.value;
-  payload.totalPrice = thisCart.totalPrice;
-  payload.subTotalPrice = thisCart.subtotalPrice;
-  payload.totalNumber = thisCart.totalNumber;
-  payload.deliveryFee = thisCart.deliveryFee;
-  payload.products = [];
-  for(let prod of thisCart.products) {
-    payload.products.push(prod.getData());
+  sendOrder() {
+    const thisCart = this;
+    const url = settings.db.url + '/' + settings.db.order;
+    const payload = {};
+    payload.address = thisCart.dom.address.value;
+    payload.phone = thisCart.dom.phone.value;
+    payload.totalPrice = thisCart.totalPrice;
+    payload.subTotalPrice = thisCart.subtotalPrice;
+    payload.totalNumber = thisCart.totalNumber;
+    payload.deliveryFee = thisCart.deliveryFee;
+    payload.products = [];
+    for(let prod of thisCart.products) {
+      payload.products.push(prod.getData());
+    }
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    };
+      
+    fetch(url, options)
+      .then(function(response) {
+        return response.json;
+      })
+      .then(function(parsedResponse) {
+        console.log('parsedResponse', parsedResponse);
+      });
   }
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  };
-
-  fetch(url, options)
-    .then(function(response) {
-      return response.json;
-    })
-    .then(function(parsedResponse) {
-      console.log('parsedResponse', parsedResponse);
-    });
+    
 }
-}
-
 export default Cart;
