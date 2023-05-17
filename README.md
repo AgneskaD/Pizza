@@ -1,1 +1,1 @@
-[link](js-pizzeria.imdpd.repl.co)
+[Please click here to see the website](js-pizzeria.imdpd.repl.co)
